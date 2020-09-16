@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/@reactivex/rxjs@6.3.3/dist/global/rxjs.umd.js"></script>
+  </head>
+  <body>
+    <script>
+      const { Observable } = rxjs;
+
+      const promise = new Promise((resolve) => {
+        resolve(1); // async
+      });
+
+      const observer = new Observable((observer) => {
+        observer.next(1); // sync
+        observer.next(2); // sync
+        observer.next(4); // sync
+        setTimeout(() => observer.next(5), 1000); // async
+      });
+
+      promise.then((res) => console.log(">> Promise", res));
+      console.log("depois da promise");
+      observer.subscribe((x) => console.log(">> Observable", x));
+      console.log("depois do observable");
+    </script>
+  </body>
+</html>

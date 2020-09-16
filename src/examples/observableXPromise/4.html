@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/@reactivex/rxjs@6.3.3/dist/global/rxjs.umd.js"></script>
+  </head>
+  <body>
+    <script>
+      const { Observable } = rxjs;
+
+      // promises nativas do JS não são canceláveis
+      // BlueBird - (npm install bluebird)
+      const promise = new Promise((resolve) => {
+        resolve(1); // async
+      });
+
+      // observables são canceláveis
+      const observer = new Observable((observer) => {
+        let i = 0;
+        const interval = setInterval(() => {
+          console.log("observer", i);
+          observer.next(i++);
+        }, 1000); // async
+
+        return () => clearInterval(interval);
+      });
+
+      promise.then((res) => console.log(">> Promise", res));
+
+      const subscription = observer.subscribe((x) =>
+        console.log(">> Observable", x)
+      );
+
+      setTimeout(() => subscription.unsubscribe(), 4000);
+    </script>
+  </body>
+</html>

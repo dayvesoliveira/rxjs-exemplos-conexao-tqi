@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Operators - Debounce Time</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <script src="https://unpkg.com/@reactivex/rxjs@6.3.3/dist/global/rxjs.umd.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <br />
+      <div class="row">
+        <div class="col">
+          <input
+            type="text"
+            class="form-control"
+            aria-label="campo de digitação autocomplete"
+          />
+          <div class="d-flex justify-content-center m-1">
+            <div class="spinner-border" role="status" style="display: none;">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br />
+      <ul class="list-group"></ul>
+    </div>
+    <script>
+      const { fromEvent, defer, of } = rxjs;
+      const { ajax } = rxjs.ajax;
+      const {
+        map,
+        switchMap,
+        skipWhile,
+        tap,
+        debounceTime,
+        share,
+      } = rxjs.operators;
+
+      /*
+       - URL de teste: https://api.github.com/
+       - tap: Intercepta cada emissão na fonte e executa uma função, mas retorna uma saída que é idêntica à fonte,
+        (desde que não ocorram erros).
+       - debouceTime:  Filtra as emissões, passando apenas o valor mais recente das emissões.
+       - switchMap: Gera novo observável de acordo com os valores observáveis ​​de origem.
+      */
+
+      const input$ = fromEvent(document.querySelector("input"), "keypress");
+      const spinner = document.querySelector(".spinner-border");
+
+      const searchApi = (x) =>
+        defer(() =>
+          x.target.value != ""
+            ? ajax(
+                `https://api.github.com/search/repositories?q=${x.target.value}`
+              ).pipe(
+                map(({ response }) => {
+                  // console.log(response);
+                  return response.items;
+                })
+              )
+            : of([])
+        );
+
+      const result = input$.pipe(
+        tap((ev) => {
+          console.log("keypress", ev);
+          spinner.style.display = "inline-block";
+        }),
+        debounceTime(200),
+        switchMap((x) => searchApi(x))
+      );
+
+      result.subscribe(
+        (next) => {
+          console.log("Subscribe -> ", next);
+          render(next);
+        },
+        ({ message }) => {
+          render([]);
+          console.log("Error -> ", message);
+        }
+      );
+
+      const render = (res) => {
+        const ul = document.querySelector("ul");
+
+        const list = res.map(
+          ({ id, name, full_name }) =>
+            `<li class="list-group-item">${id} - ${name} - ${full_name}</li>`
+        );
+
+        ul.innerHTML = list.join("\n");
+        spinner.style.display = "none";
+      };
+    </script>
+  </body>
+</html>

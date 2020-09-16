@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/@reactivex/rxjs@6.3.3/dist/global/rxjs.umd.js"></script>
+  </head>
+  <body>
+    <script>
+      const { Observable } = rxjs;
+      const { share } = rxjs.operators;
+
+      const promise = new Promise((resolve) => {
+        console.log("## iniciando Promise");
+
+        setTimeout(() => resolve(1), 3000);
+      });
+
+      const observer = new Observable((observer) => {
+        console.log("## iniciando Observable");
+
+        setTimeout(() => observer.next(1), 3000);
+      }).pipe(share());
+
+      promise.then((res) => console.log(">> Promise", res));
+      observer.subscribe((x) => console.log(">> Observable", x));
+
+      setTimeout(() => {
+        promise.then((res) => console.log(">> Promise", res));
+        observer.subscribe((x) => console.log(">> Observable", x));
+        // segunda emissão do observable
+        // por padrão não tem estado compartilhado
+      }, 2000);
+    </script>
+  </body>
+</html>

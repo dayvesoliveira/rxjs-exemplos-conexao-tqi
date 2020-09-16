@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Operators - from</title>
+    <script src="https://unpkg.com/@reactivex/rxjs@6.3.3/dist/global/rxjs.umd.js"></script>
+  </head>
+  <body>
+    <script>
+      const { from, forkJoin } = rxjs;
+      //  const { forkJoin } = rxjs.operators;
+      const array = [1, 2, true, "string", { a: 1 }];
+
+      const promise1 = Promise.resolve("Hop!!!");
+      const promise2 = Promise.resolve("Olá!!!");
+      const promise3 = Promise.resolve("Ihhh!!!");
+
+      from(forkJoin([promise1, promise3, promise2])).subscribe((x) =>
+        console.log(x)
+      );
+    </script>
+  </body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Operators - Ajax</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+      crossorigin="anonymous"
+    />
+    <script src="https://unpkg.com/@reactivex/rxjs@6.3.3/dist/global/rxjs.umd.js"></script>
+    <style>
+      img {
+        width: 5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <ul class="list-unstyled"></ul>
+      <br />
+      <button class="btn btn-danger">Cancelar</button>
+    </div>
+
+    <script>
+      const { interval } = rxjs;
+
+      const { of, fromEvent } = rxjs;
+      const { ajax } = rxjs.ajax;
+      const { map, catchError, delay } = rxjs.operators;
+
+      const observable$ = ajax(`https://api.github.com/users?per_page=5`).pipe(
+        delay(4000),
+        map((userResponse) => {
+          console.log("users: ", userResponse);
+          return userResponse.response;
+        }),
+        catchError((error) => {
+          console.log("error: ", error);
+          // throw "error in source. Details: " + error;
+          return of([]); // tratamento de erro
+        })
+      );
+
+      const subscription = observable$.subscribe(
+        (res) => {
+          console.log("res: ", res);
+          const array = [];
+
+          const container = document.querySelector(".list-unstyled");
+          res.forEach((element) => {
+            array.push(
+              `<li class="media m-2">
+              <img class="rounded-circle mr-3" src="${element.avatar_url}" />
+              <div class="media-body">
+                <h5 class="mt-0 mb-1">${element.login}</h5>
+              </div>
+            </li>
+            `
+            );
+          });
+
+          container.innerHTML = array.join("\n");
+        },
+        (error) => console.log(error)
+      );
+
+      const button = document.querySelector("button");
+      fromEvent(button, "click").subscribe(() => {
+        console.log("## CANCELAMENTO DO OBSERVABLE - AJAX ##");
+        subscription.unsubscribe();
+      });
+    </script>
+  </body>
+</html>

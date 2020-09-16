@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/@reactivex/rxjs@6.3.3/dist/global/rxjs.umd.js"></script>
+  </head>
+  <body>
+    <script>
+      const { Subject } = rxjs;
+      const subject = new Subject();
+      // São por padrão multicast, ou seja estado compartilhado
+
+      const subscription1 = subject.subscribe(
+        (next) => console.log("first: " + next),
+        (error) => console.log(error),
+        (commplete) => console.log("Complete!")
+      );
+
+      const subscription2 = subject.subscribe(
+        (next) => console.log("second: " + next),
+        (error) => console.log(error),
+        (commplete) => console.log("Complete!")
+      );
+
+      subject.next(1);
+      subject.next(2);
+      // subject.error(new Error("deu ruim!"));
+      subject.complete();
+
+      subscription1.add(subscription2);
+
+      setTimeout(() => subscription1.unsubscribe(), 2000);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/@reactivex/rxjs@6.3.3/dist/global/rxjs.umd.js"></script>
+  </head>
+  <body>
+    <script>
+      const { Subject, from } = rxjs;
+      const subject = new Subject();
+      // Podem ser usados para alterar o estado de um observable (unicast -> multicast)
+
+      subject.subscribe({
+        next: (v) => console.log(`observerA: ${v}`),
+      });
+
+      subject.subscribe({
+        next: (v) => console.log(`observerB: ${v}`),
+      });
+
+      const observable = from(["EU", "sou", "multicast", "agora"]);
+
+      observable.subscribe(subject);
+    </script>
+  </body>
+</html>

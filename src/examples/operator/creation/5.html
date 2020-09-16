@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Operators - Of</title>
+    <script src="https://unpkg.com/@reactivex/rxjs@6.3.3/dist/global/rxjs.umd.js"></script>
+  </head>
+  <body>
+    <script>
+      const { interval } = rxjs;
+
+      const subscriber = interval(1000).subscribe((x) => console.log(x));
+
+      setTimeout(() => subscriber.unsubscribe(), 4000);
+    </script>
+  </body>
+</html>

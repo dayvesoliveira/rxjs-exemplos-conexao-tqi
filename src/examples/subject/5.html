@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/@reactivex/rxjs@6.3.3/dist/global/rxjs.umd.js"></script>
+  </head>
+  <body>
+    <script>
+      const { AsyncSubject } = rxjs;
+      const subject = new AsyncSubject();
+
+      subject.subscribe({
+        next: (v) => console.log(`observerA: ${v}`),
+      });
+
+      subject.next(1);
+      subject.next(2);
+      subject.next(3);
+      subject.next(4);
+
+      subject.subscribe({
+        next: (v) => console.log(`observerB: ${v}`),
+      });
+
+      subject.next(5);
+
+      setTimeout(() => subject.complete(), 2000);
+
+      // Logs:
+      // observerA: 5
+      // observerB: 5
+    </script>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/@reactivex/rxjs@6.3.3/dist/global/rxjs.umd.js"></script>
+  </head>
+  <body>
+    <script>
+      const { BehaviorSubject } = rxjs;
+      const subject = new BehaviorSubject(0); // 0 is the initial value
+      subject.subscribe({
+        next: (v) => console.log(`observerA: ${v}`),
+      });
+      subject.next(1);
+      subject.next(2);
+
+      subject.subscribe({
+        next: (v) => console.log(`observerB: ${v}`),
+      });
+      subject.next(3);
+
+      // Logs
+      // observerA: 0
+      // observerA: 1
+      // observerA: 2
+      // observerB: 2
+      // observerA: 3
+      // observerB: 3
+    </script>
+  </body>
+</html>

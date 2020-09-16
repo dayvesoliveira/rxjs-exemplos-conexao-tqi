@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/@reactivex/rxjs@6.3.3/dist/global/rxjs.umd.js"></script>
+  </head>
+  <body>
+    <script>
+      const { Observable } = rxjs;
+
+      const promise = new Promise((resolve) => {
+        resolve(1);
+        // resolve(2);
+        //
+        console.log("## iniciando Promise");
+      });
+
+      // comportamento eager
+      promise.then((res) => console.log(">> Promise", res));
+
+      const observer = new Observable((observer) => {
+        observer.next(1);
+        observer.next(2);
+        observer.next(3);
+        //
+        console.log("## iniciando Observable");
+      });
+
+      // comportamento lazy
+      observer.subscribe((x) => console.log(">> Observable", x));
+    </script>
+  </body>
+</html>

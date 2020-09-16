@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Operators - Filter e Reduce</title>
+    <script src="https://unpkg.com/@reactivex/rxjs@6.3.3/dist/global/rxjs.umd.js"></script>
+  </head>
+  <body>
+    <script>
+      const { from } = rxjs;
+      const { filter, reduce } = rxjs.operators;
+
+      const pessoas = [
+        { nome: "João", sexo: "masculino", idade: 18 },
+        { nome: "José", sexo: "masculino", idade: 32 },
+        { nome: "Maria", sexo: "feminino", idade: 11 },
+        { nome: "Julia", sexo: "feminino", idade: 23 },
+      ];
+
+      /* 
+      const maioresAgrupadosPorSexoImperativo = pessoas => 
+        pessoas.filter(e => e.idade >= 18)
+          reduce(
+            (a, b) => ({
+              ...a,
+              [b.sexo]: [...(a[a.sexo] || []), b],
+            }),
+          {});
+
+      maioresAgrupadosPorSexoImperativo(pessoas);
+      */
+
+      const maioresAgrupadosPorSexo = () => (source$) =>
+        source$.pipe(
+          filter((e) => e.idade >= 18),
+          reduce(
+            (a, b) => ({
+              ...a,
+              [b.sexo]: [...(a[a.sexo] || []), b],
+            }),
+            {} // param de inicialização
+          )
+        );
+
+      from(pessoas)
+        .pipe(maioresAgrupadosPorSexo())
+        .subscribe(
+          (res) => console.log(res),
+          (err) => console.error(err)
+        );
+    </script>
+  </body>
+</html>
